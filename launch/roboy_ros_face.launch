@@ -1,0 +1,29 @@
+<launch>
+	<!-- Set this to your camera's name -->
+		<arg name="cam_name" value="videoStreamer" />
+
+	<!-- Start the GSCAM node -->
+		
+		<!--
+		<env name="GSCAM_CONFIG" value="filesrc location=/home/student/Downloads/Video1/Video1.avi ! avidemux name=demux demux.video_00 ! decodebin  ! ffmpegcolorspace  ! video/x-raw-rgb ! identity name=ros ! fakesin" />
+		-->
+		
+		<node pkg="roboy_ros_face" type="roboy_ros_face_node" name="$(arg cam_name)">
+			<param name="mode" value="mode_I" />
+			<param name="camera_name" value="$(arg cam_name)" />
+			
+			<!--
+			<remap from="camera/image_raw" to="$(arg cam_name)/image_raw" />
+			-->
+			
+			<!--
+			<remap from="camera/image_raw/compressed" to="camera/rgb/image_color/compressed_throttle" />
+			-->
+		</node>
+		
+		<param name="camera/image_raw/compressed/jpeg_quality" value="8"/>
+		
+		<!-- Make a slower camera feed available. -->
+		<node pkg="topic_tools" type="throttle" name="camera_throttle" output="screen" args="messages camera/image_raw/compressed 10 camera/rgb/image_color/compressed_throttle"/>
+
+</launch>
