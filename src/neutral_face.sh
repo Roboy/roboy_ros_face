@@ -1,0 +1,1 @@
+cvlc --no-one-instance --fullscreen --no-video-title --loop /home/roboy/alonas_catkin_ws/src/roboy_ros_face/data/neutral.mp4
