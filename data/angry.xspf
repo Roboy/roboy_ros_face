@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<playlist xmlns="http://xspf.org/ns/0/" xmlns:vlc="http://www.videolan.org/vlc/playlist/ns/0/" version="1">
+	<title>Playlist</title>
+	<trackList>
+		<track>
+			<location>file:///home/roboy/alonas_catkin_ws/src/roboy_ros_face/data/40_NeutralFaceToAngry_.mp4</location>
+			<duration>3761</duration>
+			<extension application="http://www.videolan.org/vlc/playlist/0">
+				<vlc:id>0</vlc:id>
+			</extension>
+		</track>
+		<track>
+			<location>file:///home/roboy/alonas_catkin_ws/src/roboy_ros_face/data/41_Angry_.mp4</location>
+			<duration>673</duration>
+			<extension application="http://www.videolan.org/vlc/playlist/0">
+				<vlc:id>1</vlc:id>
+			</extension>
+		</track>
+		<track>
+			<location>file:///home/roboy/alonas_catkin_ws/src/roboy_ros_face/data/42_AngryToNeutralFace_.mp4</location>
+			<duration>3506</duration>
+			<extension application="http://www.videolan.org/vlc/playlist/0">
+				<vlc:id>2</vlc:id>
+			</extension>
+		</track>
+	</trackList>
+	<extension application="http://www.videolan.org/vlc/playlist/0">
+			<vlc:item tid="0"/>
+			<vlc:item tid="1"/>
+			<vlc:item tid="2"/>
+	</extension>
+</playlist>
