@@ -9,7 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   message_generation
-  gscam
+  #gscam
 )
 
 ##  services in the 'srv' folder
@@ -24,8 +24,9 @@ generate_messages(
 )
 
 catkin_package(
-  LIBRARIES gscam
-  CATKIN_DEPENDS roscpp rospy std_msgs message_generation gscam
+  #LIBRARIES gscam
+  CATKIN_DEPENDS roscpp rospy std_msgs message_generation 
+  #gscam
 #  DEPENDS system_lib
 )
 

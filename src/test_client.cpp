@@ -5,23 +5,24 @@
 int main(int argc, char **argv){
 	
 	ros::init(argc, argv, "NbrOfVideoToPlay");
-	if (argc != 2){
-		ROS_INFO("usage: which video to play X");
+	if (argc != 3){
+		ROS_ERROR("Expected arguments: face state name and duration");
 		return 1;
 	}
 
 	ros::NodeHandle n;
-	ros::ServiceClient client = n.serviceClient<roboy_ros_face::PlayEmotionSrv>("/wheeled_robin/application/play_video");
+	ros::ServiceClient client = n.serviceClient<roboy_ros_face::PlayEmotionSrv>("/roboy/face");
 	roboy_ros_face::PlayEmotionSrv srv;
 	
 	srv.request.emotion = argv[1];
+	srv.request.duration = std::stoi(argv[2]);
 	if (client.call(srv))
 	{
-		ROS_INFO("done playing");
+		ROS_INFO("Done with playing required face state");
 	} 
 	else 
 	{
-		ROS_ERROR("Video not found");
+		ROS_ERROR("Unknown name for the face state");
 		return 1;
 	}
 

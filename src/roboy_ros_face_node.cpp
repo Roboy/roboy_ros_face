@@ -1,44 +1,95 @@
 #include "ros/ros.h"
 #include "roboy_ros_face/PlayEmotionSrv.h"
 #include "stdlib.h"
-#include <gscam/gscam.h>
+// #include <gscam/gscam.h>
 #include <thread>
+#include <boost/thread.hpp>
+#include <unistd.h>
 
-int METHOD;
 
-void play(std::string filename, bool loop)
+void play(std::string filename)
 {
-	ROS_INFO("About to play a video");
+	
 	std::string cmd = "cvlc --no-one-instance --fullscreen --no-video-title ";
 	cmd += filename;
-	if (loop)
-	{
+	// if (duration > 0)
+	// {
 		cmd += " --loop ";	
+		system(cmd.c_str());
+		// usleep(duration);
+		// std::string kill = "ps axf | grep dummy | grep -v grep | awk '{print \"kill -15 \" $1}' | sh";
+		// system(kill.c_str());
+	// }
+	// else if (duration==0)
+	// {
+	// 	cmd += " --play-and-exit vlc://quit";
+	// 	system(cmd.c_str());
+	// }
+	
+}
+
+
+bool playFace (roboy_ros_face::PlayEmotionSrv::Request  &req, roboy_ros_face::PlayEmotionSrv::Response &res){
+
+	std::string smile = "/home/roboy/alonas_catkin_ws/src/roboy_ros_face/data/smiling.xspf";
+	std::string speak = "/home/roboy/alonas_catkin_ws/src/roboy_ros_face/data/speak.mp4";
+	std::string blush = "/home/roboy/alonas_catkin_ws/src/roboy_ros_face/data/blush.mp4";
+	std::string kiss = "/home/roboy/alonas_catkin_ws/src/roboy_ros_face/data/kiss.mp4";
+	std::string blink = "/home/roboy/alonas_catkin_ws/src/roboy_ros_face/data/blink.mp4";
+	std::string sweat = "/home/roboy/alonas_catkin_ws/src/roboy_ros_face/data/sweat.mp4";
+	std::string angry = "/home/roboy/alonas_catkin_ws/src/roboy_ros_face/data/angry.xspf";
+	std::string emotionFile = "";
+	int duration = req.duration;
+
+	if (req.emotion=="speak")
+	{
+		emotionFile = speak;
+	}
+	else if (req.emotion=="smile")
+	{
+		emotionFile = smile;
+		duration += 3;
+	}
+	else if (req.emotion=="blush")
+	{
+		emotionFile = blush;
+		duration += 6;
+	}
+	else if (req.emotion=="kiss")
+	{
+		emotionFile = kiss;
+		duration += 9;
+	}
+	else if (req.emotion=="blink")
+	{
+		emotionFile = blink;
+		duration += 1;
+	}
+	else if (req.emotion=="sweat")
+	{
+		emotionFile = sweat;
+		duration += 4;
+	}
+	else if (req.emotion=="angry")
+	{
+		emotionFile = angry;
+		duration += 9;
 	}
 	else
 	{
-		cmd += " vlc://quit";
+		ROS_ERROR("Unrecognized name of the face state.");
+		return 0;
 	}
-	system(cmd.c_str());
-}
 
-// Service Funktion
-bool playVideo(roboy_ros_face::PlayEmotionSrv::Request  &req, roboy_ros_face::PlayEmotionSrv::Response &res){
-
-	/**
-	 The delivery parameter must be: "/home/student/Downloads/Video1"
-	 all video files must be named as:"video.avi"
-	 all sh files must be named as: openvideo.sh"
-	*/
-
-	std::string neutral = "/home/missx/ros_catkin_ws/src/roboy_ros_face/data/neutral.mp4";
-	std::string smile = "/home/missx/ros_catkin_ws/src/roboy_ros_face/data/smile.mp4";
-	std::string talk = "/home/missx/ros_catkin_ws/src/roboy_ros_face/data/talk.mp4";
-	
 	ros::NodeHandle n, nh_private("~");
-	play(smile,false);
+	// ROS_INFO("State "+ req.emotion.c_str() + "\t duration: " + req.duration.c_str());
+	std::thread e(play, emotionFile);
+	e.detach();
+	usleep(duration*1000000);
+	std::string kill = "ps axf | grep dummy | grep -v grep | awk '{print \"kill -15 \" $1}' | sh";
+	system(kill.c_str());
 	
-	return true;
+	return 1;
 }
 
 
@@ -46,25 +97,15 @@ bool playVideo(roboy_ros_face::PlayEmotionSrv::Request  &req, roboy_ros_face::Pl
 int main(int argc, char **argv){
 
 	ros::init(argc, argv, "roboy_ros_face");
-	ROS_INFO("Initialized video server");
+	ROS_INFO("Initialized roboy face server");
 
 	ros::NodeHandle n, nh_private("~");	
+	
+	// std::string mode_;
+	// nh_private.param<std::string>("mode", mode_, "mode_II");
+	
+	ros::ServiceServer service = n.advertiseService("/roboy/face", playFace);
 
-	std::string neutral = "/home/missx/ros_catkin_ws/src/roboy_ros_face/data/neutral.mp4";
-	//play(neutral,1);
-	
-	std::string mode_;
-	nh_private.param<std::string>("mode", mode_, "mode_II");
-	if(mode_.compare("mode_I") == 0){
-		METHOD = 1; // = open VLC Player
-	} else {
-		METHOD = 2; // = stream
-	}
-	
-	ros::ServiceServer service = n.advertiseService("/wheeled_robin/application/play_video", playVideo);
-
-	ROS_INFO("Ready to play video");
-	
 	ros::spin();
 	
 	return 0;
